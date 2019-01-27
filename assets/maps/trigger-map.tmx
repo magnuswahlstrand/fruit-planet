@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.2" tiledversion="1.2.1" orientation="orthogonal" renderorder="right-down" width="12" height="6" tilewidth="16" tileheight="16" infinite="0" nextlayerid="6" nextobjectid="7">
+ <tileset firstgid="1" name="platformer2" tilewidth="16" tileheight="16" tilecount="520" columns="26">
+  <image source="../images/platformer.png" width="416" height="320"/>
+ </tileset>
+ <layer id="1" name="background" width="12" height="6">
+  <data encoding="csv">
+339,340,341,342,343,344,345,346,347,348,339,340,
+365,366,367,368,369,370,371,372,373,374,365,366,
+391,392,393,394,395,396,397,398,399,400,391,392,
+417,418,419,420,421,422,423,424,425,426,417,418,
+443,444,445,446,447,448,449,450,451,452,443,444,
+469,470,471,472,473,474,475,476,477,478,469,470
+</data>
+ </layer>
+ <layer id="3" name="blocks" width="12" height="6">
+  <data encoding="csv">
+0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,118,119,119,119,
+0,0,0,0,0,0,0,0,144,145,145,145,
+119,119,119,119,119,119,119,119,145,145,145,145
+</data>
+ </layer>
+ <objectgroup id="2" name="objects">
+  <object id="6" name="player" type="player" x="0" y="48" width="16" height="16"/>
+ </objectgroup>
+ <objectgroup color="#ff0000" id="4" name="area">
+  <object id="4" x="32" y="48" width="32" height="32"/>
+  <object id="5" x="96" y="48" width="32" height="32"/>
+ </objectgroup>
+ <objectgroup id="5" name="hitboxes">
+  <object id="2" x="0" y="80" width="192"/>
+  <object id="3" x="128" y="48" width="64" height="32"/>
+ </objectgroup>
+</map>
