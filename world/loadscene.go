@@ -7,10 +7,12 @@ import (
 	"math"
 	"path/filepath"
 
+	"github.com/kyeett/fruit-planet/entityloader"
+
 	"github.com/hajimehoshi/ebiten"
 	"github.com/peterhellberg/gfx"
 
-	tiled "github.com/kyeett/go-tiled"
+	tiled "github.com/lafriks/go-tiled"
 )
 
 // Canvas holds sprite sources and images for rendering
@@ -84,10 +86,53 @@ func (w *World) LoadScene(name string) error {
 		return err
 	}
 	w.canvas.renderers["background"] = img
-
 	w.canvas.LoadTileset(m, "sprite", "background")
-	fmt.Println("load scene", img)
+
+	w.loadEntities(m)
 	return nil
+}
+
+func (w *World) loadEntities(m *tiled.Map) {
+	for _, og := range m.ObjectGroups {
+		if og.Name == "triggers" {
+			continue
+		}
+
+		for _, o := range og.Objects {
+
+			switch {
+			case og.Name == "hitboxes":
+				entityloader.Hitbox(w.em, o)
+			case og.Name == "areas":
+				entityloader.Area(w.em, o)
+			case o.Text.Text != "":
+				entityloader.Text(w.em, o)
+			default:
+
+				switch o.Type {
+				case "player":
+					entityloader.Player(w.em, o)
+				default:
+					fmt.Println("unknown object", o)
+				}
+			}
+
+		}
+	}
+
+	// Load triggers last, because they need the references to other entitites
+	for _, og := range m.ObjectGroups {
+		if og.Name != "triggers" {
+			continue
+		}
+
+		for _, o := range og.Objects {
+			entityloader.Condition(w.em, o)
+		}
+	}
+
+	// w.em.DumpEntity("player_1")
+	// w.em.DumpEntity("area_1")
 }
 
 func loadImage(filename string) *ebiten.Image {

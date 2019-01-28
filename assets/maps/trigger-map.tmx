@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="1.2.1" orientation="orthogonal" renderorder="right-down" width="12" height="6" tilewidth="16" tileheight="16" infinite="0" nextlayerid="6" nextobjectid="7">
+<map version="1.2" tiledversion="1.2.1" orientation="orthogonal" renderorder="right-down" width="12" height="6" tilewidth="16" tileheight="16" infinite="0" nextlayerid="7" nextobjectid="17">
  <tileset firstgid="1" name="platformer2" tilewidth="16" tileheight="16" tilecount="520" columns="26">
   <image source="../images/platformer.png" width="416" height="320"/>
  </tileset>
@@ -24,14 +24,53 @@
 </data>
  </layer>
  <objectgroup id="2" name="objects">
-  <object id="6" name="player" type="player" x="0" y="48" width="16" height="16"/>
+  <object id="6" name="player" type="player" x="32" y="48" width="16" height="16"/>
+  <object id="8" x="16" y="16" width="89.5469" height="18.8438">
+   <properties>
+    <property name="conditional" value="left_area_trigger"/>
+   </properties>
+   <text wrap="1">Hello!</text>
+  </object>
+  <object id="9" x="64" y="0" width="89.5469" height="18.8438">
+   <text wrap="1">Press X</text>
+  </object>
+  <object id="13" x="112" y="16" width="89.5469" height="18.8438">
+   <properties>
+    <property name="conditional" value="x_pressed_trigger"/>
+   </properties>
+   <text wrap="1">X Pressed!</text>
+  </object>
+  <object id="16" x="128" y="0" width="89.5469" height="18.8438">
+   <properties>
+    <property name="conditional" value="win_condition"/>
+   </properties>
+   <text wrap="1">You win!</text>
+  </object>
  </objectgroup>
- <objectgroup color="#ff0000" id="4" name="area">
-  <object id="4" x="32" y="48" width="32" height="32"/>
-  <object id="5" x="96" y="48" width="32" height="32"/>
+ <objectgroup color="#ff0000" id="4" name="areas">
+  <object id="4" name="left_area" x="32" y="48" width="32" height="32"/>
+  <object id="5" name="right_area" x="96" y="48" width="32" height="32"/>
  </objectgroup>
  <objectgroup id="5" name="hitboxes">
-  <object id="2" x="0" y="80" width="192"/>
+  <object id="2" x="0" y="80" width="192" height="16"/>
   <object id="3" x="128" y="48" width="64" height="32"/>
+ </objectgroup>
+ <objectgroup id="6" name="triggers">
+  <object id="10" name="left_area_trigger" x="48" y="96">
+   <properties>
+    <property name="in_area" value="player_1,left_area"/>
+   </properties>
+  </object>
+  <object id="12" name="win_condition" x="112" y="112">
+   <properties>
+    <property name="in_area" value="player_1,right_area"/>
+    <property name="key_pressed" value="x"/>
+   </properties>
+  </object>
+  <object id="15" name="x_pressed_trigger" x="80" y="112">
+   <properties>
+    <property name="key_pressed" value="x"/>
+   </properties>
+  </object>
  </objectgroup>
 </map>

@@ -43,14 +43,16 @@ func New(m string, width, height int) *World {
 		log.Fatal(err)
 	}
 	w.systems = []system.System{
-		system.NewInput(em, eventCh, logging.NewLogger(logrus.InfoLevel)),
-		system.NewControls(em, eventCh, logging.NewLogger(logrus.InfoLevel)),
+		// system.NewInput(em, eventCh, logging.NewLogger(logrus.InfoLevel)),
+		system.NewControls(em, logging.NewLogger(logrus.InfoLevel)),
 		system.NewMovement(em, logging.NewLogger(logrus.InfoLevel)),
+		system.NewTrigger(em, logging.NewLogger(logrus.InfoLevel)),
 	}
 
 	w.renderSystems = []rendersystem.System{
 		rendersystem.NewRenderImage(w.canvas.renderers["background"], logging.NewLogger()),
 		rendersystem.NewRender(em, logging.NewLogger()),
+		rendersystem.NewDebugRender(em, logging.NewLogger()),
 	}
 	return &w
 }
@@ -58,20 +60,8 @@ func New(m string, width, height int) *World {
 // Reset the world and it's entitites to its original state
 func (w *World) Reset() {
 	w.em.Reset()
-	w.camera.Reset()
+	// w.camera.Reset()
 	w.LoadScene("default")
-}
-
-// StartEventQueue starts the event queue for the ECS system
-func (w *World) StartEventQueue() {
-	go func() {
-		for {
-			ev := <-w.eventCh
-			for _, s := range w.systems {
-				s.Send(ev)
-			}
-		}
-	}()
 }
 
 var timeStep = 1.0
