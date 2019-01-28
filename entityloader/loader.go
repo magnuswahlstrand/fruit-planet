@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"image"
 	"log"
+	"strconv"
 	"strings"
 
 	"github.com/hajimehoshi/ebiten/ebitenutil"
@@ -94,8 +95,16 @@ func Text(em *entity.Manager, o *tiled.Object) {
 
 		conditional := o.Properties.GetString("conditional")
 		if conditional != "" {
-			em.Add(e, components.ConditionalDrawable{ConditionName: conditional})
+			maxTransitions := 0 //Default, infinite number of transitions
+			i, err := strconv.Atoi(o.Properties.GetString("max_transitions"))
+			if err == nil {
+				maxTransitions = i
+				fmt.Println("loaded", maxTransitions, conditional)
+			}
+
+			em.Add(e, components.ConditionalDrawable{ConditionName: conditional, MaxTransitions: maxTransitions})
 		}
+
 	}
 	em.Add(e, components.Drawable{img})
 	// e := em.NewEntity("condition")

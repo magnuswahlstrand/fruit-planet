@@ -45,6 +45,7 @@ func New(m string, width, height int) *World {
 	w.systems = []system.System{
 		// system.NewInput(em, eventCh, logging.NewLogger(logrus.InfoLevel)),
 		system.NewControls(em, logging.NewLogger(logrus.InfoLevel)),
+		system.NewGravity(em, logging.NewLogger(logrus.InfoLevel)),
 		system.NewMovement(em, logging.NewLogger(logrus.InfoLevel)),
 		system.NewTrigger(em, logging.NewLogger(logrus.InfoLevel)),
 	}

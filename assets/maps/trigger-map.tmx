@@ -24,10 +24,11 @@
 </data>
  </layer>
  <objectgroup id="2" name="objects">
-  <object id="6" name="player" type="player" x="32" y="48" width="16" height="16"/>
+  <object id="6" name="player" type="player" x="-16" y="48" width="16" height="16"/>
   <object id="8" x="16" y="16" width="89.5469" height="18.8438">
    <properties>
     <property name="conditional" value="left_area_trigger"/>
+    <property name="max_transitions" type="int" value="3"/>
    </properties>
    <text wrap="1">Hello!</text>
   </object>
@@ -37,6 +38,7 @@
   <object id="13" x="112" y="16" width="89.5469" height="18.8438">
    <properties>
     <property name="conditional" value="x_pressed_trigger"/>
+    <property name="max_transitions" type="int" value="2"/>
    </properties>
    <text wrap="1">X Pressed!</text>
   </object>
@@ -48,7 +50,7 @@
   </object>
  </objectgroup>
  <objectgroup color="#ff0000" id="4" name="areas">
-  <object id="4" name="left_area" x="32" y="48" width="32" height="32"/>
+  <object id="4" name="left_area" x="16" y="48" width="32" height="32"/>
   <object id="5" name="right_area" x="96" y="48" width="32" height="32"/>
  </objectgroup>
  <objectgroup id="5" name="hitboxes">
