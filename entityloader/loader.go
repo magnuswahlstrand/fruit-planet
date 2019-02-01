@@ -7,6 +7,12 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/fogleman/ease"
+
+	"github.com/kyeett/gomponents/animation"
+
+	"github.com/kyeett/gomponents/pathanimation"
+
 	"github.com/hajimehoshi/ebiten/ebitenutil"
 
 	"github.com/hajimehoshi/ebiten"
@@ -67,7 +73,7 @@ func parseInAreaCondition(em *entity.Manager, prop *tiled.Property) []string {
 	return nil
 }
 
-func Condition(em *entity.Manager, o *tiled.Object) {
+func Condition(em *entity.Manager, o *tiled.Object) string {
 	e := em.NewEntity("condition")
 	cond := components.Condition{
 		Name: o.Name,
@@ -83,6 +89,7 @@ func Condition(em *entity.Manager, o *tiled.Object) {
 		}
 	}
 	em.Add(e, cond)
+	return e
 }
 
 func Text(em *entity.Manager, o *tiled.Object) {
@@ -107,6 +114,63 @@ func Text(em *entity.Manager, o *tiled.Object) {
 
 	}
 	em.Add(e, components.Drawable{img})
-	// e := em.NewEntity("condition")
-	// em.Add(e, cond)
+}
+
+func Path(em *entity.Manager, o *tiled.Object) {
+	pathID := em.NewEntity("path")
+	center := gfx.V(o.X, o.Y).AddXY(o.Width/2, o.Height/2)
+	em.Add(pathID, components.Path{
+		Label:  o.Name,
+		Points: gfx.Polygon{center, center.AddXY(0, -o.Height/2)},
+		Type:   pathanimation.Ellipse,
+	})
+}
+
+func Enemy(em *entity.Manager, o *tiled.Object) string {
+	e := em.NewEntity("player")
+
+	var hitbox gfx.Rect
+	switch o.Name {
+	case "turnip":
+		hitbox = gfx.R(0, 8, 16, 24)
+	}
+	em.Add(e, components.Pos{Vec: gfx.V(o.X, o.Y)})
+	em.Add(e, components.Velocity{Vec: gfx.V(0, 0)})
+	em.Add(e, components.NewHitbox(hitbox))
+	tmp, err := gfx.OpenPNG("assets/images/platformer.png")
+	if err != nil {
+		log.Fatal(err)
+	}
+	pImage, _ := ebiten.NewImageFromImage(tmp, ebiten.FilterDefault)
+	em.Add(e, components.Drawable{pImage.SubImage(image.Rect(0, 0, 16, 24).Add(image.Pt(96, 32-8))).(*ebiten.Image)})
+	em.Add(e, components.OnPath{
+		Label:     o.Properties.GetString("on_path"),
+		Speed:     1,
+		Target:    1,
+		Mode:      pathanimation.LinearLoop,
+		Direction: 1,
+	})
+
+	return e
+}
+
+func Animation(em *entity.Manager, pos gfx.Vec, direction float64) {
+	img, err := gfx.OpenPNG("assets/images/frames.png")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	eImg, _ := ebiten.NewImageFromImage(img, ebiten.FilterDefault)
+
+	animID := em.NewEntity("animation")
+	// em.Add(animID, components.Following{
+	// 	ID:     "player_1",
+	// 	Offset: gfx.V(-22, -22),
+	// })
+	anim := animation.New(eImg, 64, 64)
+	anim.Easing = ease.OutCubic
+	anim.Direction = direction
+	em.Add(animID, anim)
+	em.Add(animID, components.Drawable{})
+	em.Add(animID, components.Pos{pos.Add(gfx.V(-22, -22))})
 }

@@ -70,7 +70,7 @@ func TilesheetCoords(t *tiled.Tileset, ID uint32) (int, int) {
 
 // LoadScene loads a Tiled map and tileset and saves the resulting images into a canvas, and objects into the ECS system
 func (w *World) LoadScene(name string) error {
-	filename := "assets/maps/trigger-map.tmx"
+	filename := "assets/maps/" + name + ".tmx"
 	dir := filepath.Dir(filename)
 
 	// dir := filepath.Dir(filename)
@@ -105,6 +105,8 @@ func (w *World) loadEntities(m *tiled.Map) {
 				entityloader.Hitbox(w.em, o)
 			case og.Name == "areas":
 				entityloader.Area(w.em, o)
+			case og.Name == "paths":
+				entityloader.Path(w.em, o)
 			case o.Text.Text != "":
 				entityloader.Text(w.em, o)
 			default:
@@ -112,6 +114,8 @@ func (w *World) loadEntities(m *tiled.Map) {
 				switch o.Type {
 				case "player":
 					entityloader.Player(w.em, o)
+				case "enemy":
+					entityloader.Enemy(w.em, o)
 				default:
 					fmt.Println("unknown object", o)
 				}
@@ -131,8 +135,6 @@ func (w *World) loadEntities(m *tiled.Map) {
 		}
 	}
 
-	// w.em.DumpEntity("player_1")
-	// w.em.DumpEntity("area_1")
 }
 
 func loadImage(filename string) *ebiten.Image {

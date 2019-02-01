@@ -8,9 +8,11 @@ import (
 )
 
 func main() {
-	w := world.New("default", 12*16, 6*16)
+	// screenWidth, screenHeight := 12*16,6*16
+	screenWidth, screenHeight := 36*16, 24*16
+	w := world.New("trigger-map", screenWidth, screenHeight)
 
-	if err := ebiten.Run(w.Update, 12*16, 6*16, 2, "Fruit World"); err != nil {
+	if err := ebiten.Run(w.Update, screenWidth, screenHeight, 2, "Fruit World"); err != nil {
 		log.Fatal(err)
 	}
 }

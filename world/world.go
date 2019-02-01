@@ -38,22 +38,30 @@ func New(m string, width, height int) *World {
 		canvas:  NewCanvas(),
 	}
 
-	err := w.LoadScene("default")
+	err := w.LoadScene(m)
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	// pd := eventchain.NewPlayerDeath()
+	// pd.Next(em)
 	w.systems = []system.System{
 		// system.NewInput(em, eventCh, logging.NewLogger(logrus.InfoLevel)),
 		system.NewControls(em, logging.NewLogger(logrus.InfoLevel)),
 		system.NewGravity(em, logging.NewLogger(logrus.InfoLevel)),
+		system.NewFriction(em, logging.NewLogger(logrus.InfoLevel)),
+		system.NewParenting(em, logging.NewLogger(logrus.InfoLevel)),
+		system.NewFollow(em, logging.NewLogger(logrus.InfoLevel)),
+		system.NewPath(em, logging.NewLogger(logrus.InfoLevel)),
 		system.NewMovement(em, logging.NewLogger(logrus.InfoLevel)),
+		system.NewAnimation(em, logging.NewLogger(logrus.InfoLevel)),
 		system.NewTrigger(em, logging.NewLogger(logrus.InfoLevel)),
 	}
 
 	w.renderSystems = []rendersystem.System{
 		rendersystem.NewRenderImage(w.canvas.renderers["background"], logging.NewLogger()),
 		rendersystem.NewRender(em, logging.NewLogger()),
-		rendersystem.NewDebugRender(em, logging.NewLogger()),
+		// rendersystem.NewDebugRender(em, logging.NewLogger()),
 	}
 	return &w
 }
