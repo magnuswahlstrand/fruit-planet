@@ -9,16 +9,16 @@ import (
 	"github.com/kyeett/ecs/camera"
 	"github.com/kyeett/ecs/constants"
 	"github.com/kyeett/ecs/entity"
-	"github.com/kyeett/ecs/events"
+	"github.com/kyeett/ecs/eventsystem"
 	"github.com/kyeett/ecs/logging"
 	"github.com/kyeett/ecs/rendersystem"
 	"github.com/kyeett/ecs/system"
+	"github.com/kyeett/fruit-planet/events"
 	"github.com/sirupsen/logrus"
 )
 
 // World holds the ECS system, cameras and the current scene
 type World struct {
-	eventCh       chan events.Event
 	camera        *camera.Camera
 	systems       []system.System
 	renderSystems []rendersystem.System
@@ -30,9 +30,7 @@ type World struct {
 // New returns an initiated world, with camera width x height
 func New(m string, width, height int) *World {
 	em := entity.NewManager(logging.NewLogger())
-	eventCh := make(chan events.Event, 100)
 	w := World{
-		eventCh: eventCh,
 		em:      em,
 		mapName: m,
 		canvas:  NewCanvas(),
@@ -43,8 +41,6 @@ func New(m string, width, height int) *World {
 		log.Fatal(err)
 	}
 
-	// pd := eventchain.NewPlayerDeath()
-	// pd.Next(em)
 	w.systems = []system.System{
 		// system.NewInput(em, eventCh, logging.NewLogger(logrus.InfoLevel)),
 		system.NewControls(em, logging.NewLogger(logrus.InfoLevel)),
@@ -61,8 +57,10 @@ func New(m string, width, height int) *World {
 	w.renderSystems = []rendersystem.System{
 		rendersystem.NewRenderImage(w.canvas.renderers["background"], logging.NewLogger()),
 		rendersystem.NewRender(em, logging.NewLogger()),
-		// rendersystem.NewDebugRender(em, logging.NewLogger()),
+		rendersystem.NewDebugRender(em, logging.NewLogger()),
 	}
+
+	eventsystem.InitializeEventQueue(em, events.Mapper{})
 	return &w
 }
 
@@ -70,7 +68,8 @@ func New(m string, width, height int) *World {
 func (w *World) Reset() {
 	w.em.Reset()
 	// w.camera.Reset()
-	w.LoadScene("default")
+	eventsystem.Reset()
+	w.LoadScene(w.mapName)
 }
 
 var timeStep = 1.0
@@ -92,6 +91,8 @@ func (w *World) Update(screen *ebiten.Image) error {
 	for _, s := range w.systems {
 		s.Update(timeStep)
 	}
+
+	events.HandleEvents(w.em)
 
 	for _, s := range w.renderSystems {
 		s.Update(screen)

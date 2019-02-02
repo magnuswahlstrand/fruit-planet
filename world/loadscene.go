@@ -7,6 +7,10 @@ import (
 	"math"
 	"path/filepath"
 
+	"github.com/kyeett/gomponents/pathanimation"
+
+	"github.com/kyeett/gomponents/components"
+
 	"github.com/kyeett/fruit-planet/entityloader"
 
 	"github.com/hajimehoshi/ebiten"
@@ -135,6 +139,22 @@ func (w *World) loadEntities(m *tiled.Map) {
 		}
 	}
 
+	// Move entities closer to path, if needed
+	for _, e := range w.em.FilteredEntities(components.PosType, components.OnPathType) {
+		pos := w.em.Pos(e)
+		onPath := w.em.OnPath(e)
+		path := w.em.Path(onPath.Label)
+		var pathStart gfx.Vec
+		switch path.Type {
+		case pathanimation.Ellipse:
+			pathStart = path.Points[1]
+		case pathanimation.Polygon:
+			pathStart = path.Points[0]
+		default:
+			log.Fatal("Moving entitites to path of type", path.Type, "not supported")
+		}
+		pos.Vec = pathStart
+	}
 }
 
 func loadImage(filename string) *ebiten.Image {
